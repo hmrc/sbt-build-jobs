@@ -19,7 +19,7 @@ package uk.gov.hmrc
 import sbt.Keys._
 import sbt._
 
-object SbtBuildJobs extends sbt.AutoPlugin {
+object SbtBuildJobsPlugin extends sbt.AutoPlugin {
 
   private val defaultVersionFile          = "/tmp/RELEASE_VERSION"
 
