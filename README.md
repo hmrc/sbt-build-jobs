@@ -1,7 +1,19 @@
 
 # sbt-build-jobs
 
-This is a placeholder README.md for a new repository
+ [ ![Download](https://api.bintray.com/packages/hmrc/sbt-plugin-releases/sbt-build-jobs/images/download.svg) ](https://bintray.com/hmrc/sbt-plugin-releases/sbt-build-jobs/_latestVersion)
+
+This plugin provides some helper tasks to support sbt based build-jobs. 
+
+## Tasks
+
+### writeReleaseFile
+
+Outputs the value of the `version` setting to the file specified by the `releaseFileName` setting
+
+### Sbt 1.x
+
+This plugin is cross compiled for sbt `0.13.18` and `1.3.4`
 
 ### License
 

@@ -19,9 +19,9 @@ package uk.gov.hmrc
 import sbt.Keys._
 import sbt._
 
-object SbtBuildJobs extends sbt.AutoPlugin {
+object SbtBuildJobsPlugin extends sbt.AutoPlugin {
 
-  private val defaultVersionFile          = "/tmp/RELEASE_VERSION"
+  private val defaultReleaseFileName          = "/tmp/RELEASE_VERSION"
 
   object autoImport {
     val releaseFileName = settingKey[String]("Name of the file to use for the 'writeReleaseFile' task")
@@ -33,7 +33,7 @@ object SbtBuildJobs extends sbt.AutoPlugin {
   override def trigger = allRequirements
 
   override lazy val buildSettings = Seq(
-    releaseFileName := defaultVersionFile,
+    releaseFileName := defaultReleaseFileName,
     writeReleaseFile := writeReleaseFileTask.value)
 
   lazy val writeReleaseFileTask =
