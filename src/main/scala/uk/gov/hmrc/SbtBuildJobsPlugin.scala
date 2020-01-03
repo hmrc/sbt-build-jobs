@@ -21,6 +21,10 @@ import sbt._
 
 object SbtBuildJobsPlugin extends sbt.AutoPlugin {
 
+  // Environment variables that can be set to override defaults
+  private val ENV_KEY_RELEASE_FILENAME        = "RELEASE_FILENAME"
+
+  // Default values
   private val defaultReleaseFileName          = "/tmp/RELEASE_VERSION"
 
   object autoImport {
@@ -33,7 +37,7 @@ object SbtBuildJobsPlugin extends sbt.AutoPlugin {
   override def trigger = allRequirements
 
   override lazy val buildSettings = Seq(
-    releaseFileName := defaultReleaseFileName,
+    releaseFileName := sys.env.getOrElse(ENV_KEY_RELEASE_FILENAME, defaultReleaseFileName),
     writeReleaseFile := writeReleaseFileTask.value)
 
   lazy val writeReleaseFileTask =

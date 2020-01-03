@@ -11,6 +11,8 @@ This plugin provides some helper tasks to support sbt based build-jobs.
 
 Outputs the value of the `version` setting to the file specified by the `releaseFileName` setting
 
+> The releaseFileName can also be set by the env var `RELEASE_FILENAME`
+
 ### Sbt 1.x
 
 This plugin is cross compiled for sbt `0.13.18` and `1.3.4`
