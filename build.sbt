@@ -4,7 +4,7 @@ import uk.gov.hmrc.versioning.SbtGitVersioning
 val pluginName = "sbt-build-jobs"
 
 lazy val project = Project(pluginName, file("."))
-  .enablePlugins(SbtPlugin, SbtAutoBuildPlugin, SbtGitVersioning)
+  .enablePlugins(SbtPlugin, SbtAutoBuildPlugin, SbtGitVersioning, SbtArtifactory)
   .settings(
     majorVersion := 0,
     makePublicallyAvailableOnBintray := true,
