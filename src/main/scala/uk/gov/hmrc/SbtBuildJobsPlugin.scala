@@ -36,7 +36,7 @@ object SbtBuildJobsPlugin extends sbt.AutoPlugin {
 
   override def trigger = allRequirements
 
-  override lazy val buildSettings = Seq(
+  override lazy val projectSettings = Seq(
     releaseFileName := sys.env.getOrElse(ENV_KEY_RELEASE_FILENAME, defaultReleaseFileName),
     writeReleaseFile := writeReleaseFileTask.value)
 
