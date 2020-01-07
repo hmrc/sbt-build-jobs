@@ -1,0 +1,5 @@
+# check release file is written
+> writeReleaseFile
+$ exists version.txt
+# check it contains the raw version string (as adapted by the SbtGitVersioningPlugin)
+> check
