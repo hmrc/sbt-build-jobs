@@ -1,6 +1,6 @@
 sudo: false
 language: scala
-sbt: ^publishLocal ^test
+sbt: ^publishLocal ^test ^scripted
 jdk:
 - openjdk8
 cache:
