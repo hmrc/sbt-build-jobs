@@ -9,13 +9,11 @@ This plugin provides some helper tasks to support sbt based build-jobs.
 
 ### writeReleaseFile
 
-Outputs the value of the `version` setting to the file specified by the `releaseFileName` setting
-
-> The releaseFileName can also be set by the env var `RELEASE_FILENAME`
+Outputs the value of the `version` setting to the file specified by the environment variable `VERSION_FILENAME`
 
 ### writeIsPublicArtefact
 
-Outputs the value of the `isPublicArtefact` setting to the file specified by the environment variable `IS_PUBLIC_ARTEFACT_FILENAME`
+Outputs the value of the `isPublicArtefact` setting (see [sbt-setting-keys](https://github.com/hmrc/sbt-setting-keys/) to the file specified by the environment variable `IS_PUBLIC_ARTEFACT_FILENAME`
 
 ### Sbt 1.x
 
