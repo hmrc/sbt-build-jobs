@@ -1,4 +1,7 @@
-
+.metals/
+.vscode/
+.bloop/
+project/metals.sbt
 logs
 project/project
 project/target
@@ -22,4 +25,3 @@ npm-debug.log
 yarn-debug.log
 yarn-error.log
 
-    
