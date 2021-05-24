@@ -7,9 +7,13 @@ This plugin provides some helper tasks to support sbt based build-jobs.
 
 ## Tasks
 
-### writeReleaseFile
+### writeVersion
 
 Outputs the value of the `version` setting to the file specified by the environment variable `VERSION_FILENAME`
+
+### writeReleaseFile (deprecated - Use `writeVersion`)
+
+Outputs the value of the `version` setting to the file specified by the environment variable `RELEASE_FILENAME`
 
 ### writeIsPublicArtefact
 

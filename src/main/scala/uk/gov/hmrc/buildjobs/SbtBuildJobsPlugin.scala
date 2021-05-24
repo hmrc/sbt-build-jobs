@@ -22,21 +22,27 @@ import uk.gov.hmrc.sbtsettingkeys.Keys.isPublicArtefact
 
 object SbtBuildJobsPlugin extends sbt.AutoPlugin {
 
-  // Environment variables
-  private val ENV_KEY_VERSION_FILENAME            = "VERSION_FILENAME"
-  private val ENV_KEY_IS_PUBLIC_ARTEFACT_FILENAME = "IS_PUBLIC_ARTEFACT_FILENAME"
+  private object EnvKeys {
+    val versionFilename          = "VERSION_FILENAME"
+    val releaseFilename          = "RELEASE_FILENAME"
+    val isPublicArtefactFilename = "IS_PUBLIC_ARTEFACT_FILENAME"
+  }
 
   private val currentVersion = getClass.getPackage.getImplementationVersion // This requires that the class is in a package unique to that build
 
   private def getRequiredEnvVar(key: String): String =
-    sys.env.get(key).getOrElse(sys.error(s"Env var '$key' is not defined"))
+    sys.env.getOrElse(key, sys.error(s"Env var '$key' is not defined"))
 
   object autoImport {
     val writeVersion =
-      taskKey[Unit](s"Write the release version to the file specified by the '$ENV_KEY_VERSION_FILENAME' environment variable")
+      taskKey[Unit](s"Write the value of `version` to the file specified by the '${EnvKeys.versionFilename}' environment variable")
 
-    val writeIsPublicArtefact =
-      taskKey[Unit](s"Write the value of `isPublicArtefact` to the file specified by the '$ENV_KEY_IS_PUBLIC_ARTEFACT_FILENAME' environment variable")
+    @deprecated("Use writeVersion instead.", "0.5.0")
+    val writeReleaseFile =
+      taskKey[Unit](s"Write the value of `version` to the file specified by the '${EnvKeys.releaseFilename}' environment variable")
+
+      val writeIsPublicArtefact =
+      taskKey[Unit](s"Write the value of `isPublicArtefact` to the file specified by the '${EnvKeys.isPublicArtefactFilename}' environment variable")
   }
 
   import autoImport._
@@ -44,8 +50,9 @@ object SbtBuildJobsPlugin extends sbt.AutoPlugin {
   override def trigger = allRequirements
 
   override lazy val projectSettings = Seq(
-    writeVersion          := writeSettingValue(version         , ENV_KEY_VERSION_FILENAME           ).value,
-    writeIsPublicArtefact := writeSettingValue(isPublicArtefact, ENV_KEY_IS_PUBLIC_ARTEFACT_FILENAME).value
+    writeVersion          := writeSettingValue(version         , EnvKeys.versionFilename           ).value,
+    writeReleaseFile      := writeSettingValue(version         , EnvKeys.releaseFilename           ).value,
+    writeIsPublicArtefact := writeSettingValue(isPublicArtefact, EnvKeys.isPublicArtefactFilename).value
   )
 
  private def writeSettingValue[T](settingKey: SettingKey[T], pathKey: String) =
