@@ -1,10 +1,8 @@
 lazy val root = (project in file("."))
-  .enablePlugins(SbtBuildJobsPlugin, SbtGitVersioning)
   .settings(
     majorVersion := 0,
-    releaseFileName := "version.txt",
     TaskKey[Unit]("check") := {
-      val content = IO.read(new File(releaseFileName.value))
+      val content = IO.read(new File(sys.env.getOrElse("RELEASE_FILENAME", sys.error("RELEASE_FILENAME env var not provided"))))
       if (content != version.value) sys.error("unexpected version written: " + content)
       ()
     }
