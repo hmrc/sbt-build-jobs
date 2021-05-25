@@ -39,7 +39,7 @@ object SbtBuildJobsPlugin extends sbt.AutoPlugin {
 
     @deprecated("Use writeVersion instead.", "0.5.0")
     val writeReleaseFile =
-      taskKey[Unit](s"Write the value of `version` to the file specified by the '${EnvKeys.releaseFilename}' environment variable")
+      taskKey[Unit](s"Write the value of `version` to the file specified by the '${EnvKeys.releaseFilename}' environment variable. This task is deprecated, use `writeVersion` instead.")
 
       val writeIsPublicArtefact =
       taskKey[Unit](s"Write the value of `isPublicArtefact` to the file specified by the '${EnvKeys.isPublicArtefactFilename}' environment variable")
