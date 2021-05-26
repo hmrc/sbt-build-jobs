@@ -1,6 +1,0 @@
-# check release file is written
-> reload
-> writeReleaseFile
-$ exists from-env-var.txt
-# check it contains the raw version string
-> check

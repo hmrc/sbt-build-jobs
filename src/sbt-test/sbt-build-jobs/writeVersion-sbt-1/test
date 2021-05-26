@@ -1,0 +1,5 @@
+# check version is written to file
+> writeVersion
+$ exists version.txt
+# check it contains the raw version string
+> check

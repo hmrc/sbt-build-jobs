@@ -1,17 +1,12 @@
-import uk.gov.hmrc.SbtAutoBuildPlugin
-import uk.gov.hmrc.versioning.SbtGitVersioning
-
-val pluginName = "sbt-build-jobs"
-
-lazy val project = Project(pluginName, file("."))
-  .enablePlugins(SbtPlugin, SbtAutoBuildPlugin, SbtGitVersioning, SbtArtifactory)
+lazy val project = Project("sbt-build-jobs", file("."))
+  .enablePlugins(SbtPlugin)
   .settings(
     majorVersion := 0,
-    makePublicallyAvailableOnBintray := true,
+    isPublicArtefact := true,
     crossSbtVersions := Vector("0.13.18", "1.3.4"),
-    scalaVersion := "2.12.10",
-    libraryDependencies ++= Seq(
-    ),
+    scalaVersion := "2.12.12",
+    addSbtPlugin("uk.gov.hmrc"  % "sbt-setting-keys" % "0.3.0" ),
+    resolvers += Resolver.url("HMRC-open-artefacts-ivy2", url("https://open.artefacts.tax.service.gov.uk/ivy2"))(Resolver.ivyStylePatterns),
     scriptedLaunchOpts := { scriptedLaunchOpts.value ++
       Seq("-Xmx1024M", "-Dplugin.version=" + version.value)
     },
