@@ -24,7 +24,6 @@ object SbtBuildJobsPlugin extends sbt.AutoPlugin {
 
   private object EnvKeys {
     val versionFilename          = "VERSION_FILENAME"
-    val releaseFilename          = "RELEASE_FILENAME"
     val isPublicArtefactFilename = "IS_PUBLIC_ARTEFACT_FILENAME"
   }
 
@@ -37,10 +36,6 @@ object SbtBuildJobsPlugin extends sbt.AutoPlugin {
     val writeVersion =
       taskKey[Unit](s"Write the value of `version` to the file specified by the '${EnvKeys.versionFilename}' environment variable")
 
-    @deprecated("Use writeVersion instead.", "0.5.0")
-    val writeReleaseFile =
-      taskKey[Unit](s"Write the value of `version` to the file specified by the '${EnvKeys.releaseFilename}' environment variable. This task is deprecated, use `writeVersion` instead.")
-
       val writeIsPublicArtefact =
       taskKey[Unit](s"Write the value of `isPublicArtefact` to the file specified by the '${EnvKeys.isPublicArtefactFilename}' environment variable")
   }
@@ -50,8 +45,7 @@ object SbtBuildJobsPlugin extends sbt.AutoPlugin {
   override def trigger = allRequirements
 
   override lazy val projectSettings = Seq(
-    writeVersion          := writeSettingValue(version         , EnvKeys.versionFilename           ).value,
-    writeReleaseFile      := writeSettingValue(version         , EnvKeys.releaseFilename           ).value,
+    writeVersion          := writeSettingValue(version         , EnvKeys.versionFilename         ).value,
     writeIsPublicArtefact := writeSettingValue(isPublicArtefact, EnvKeys.isPublicArtefactFilename).value
   )
 
