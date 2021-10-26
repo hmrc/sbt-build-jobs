@@ -25,6 +25,7 @@ object SbtBuildJobsPlugin extends sbt.AutoPlugin {
   private object EnvKeys {
     val versionFilename          = "VERSION_FILENAME"
     val isPublicArtefactFilename = "IS_PUBLIC_ARTEFACT_FILENAME"
+    val projectsFilename         = "PROJECTS_FILENAME"
   }
 
   private val currentVersion = getClass.getPackage.getImplementationVersion // This requires that the class is in a package unique to that build
@@ -36,8 +37,11 @@ object SbtBuildJobsPlugin extends sbt.AutoPlugin {
     val writeVersion =
       taskKey[Unit](s"Write the value of `version` to the file specified by the '${EnvKeys.versionFilename}' environment variable")
 
-      val writeIsPublicArtefact =
+    val writeIsPublicArtefact =
       taskKey[Unit](s"Write the value of `isPublicArtefact` to the file specified by the '${EnvKeys.isPublicArtefactFilename}' environment variable")
+
+    val writeProjects =
+      taskKey[Unit](s"Write the value of `projects` to the file specified by the '${EnvKeys.isPublicArtefactFilename}' environment variable")
   }
 
   import autoImport._
@@ -46,7 +50,11 @@ object SbtBuildJobsPlugin extends sbt.AutoPlugin {
 
   override lazy val projectSettings = Seq(
     writeVersion          := writeSettingValue(version         , EnvKeys.versionFilename         ).value,
-    writeIsPublicArtefact := writeSettingValue(isPublicArtefact, EnvKeys.isPublicArtefactFilename).value
+    writeIsPublicArtefact := writeSettingValue(isPublicArtefact, EnvKeys.isPublicArtefactFilename).value,
+    writeProjects         := writeTaskOutput(
+                               buildStructure.map(_.allProjectRefs.map(_.project).sorted.mkString("\n")),
+                               EnvKeys.projectsFilename
+                             ).value
   )
 
  private def writeSettingValue[T](settingKey: SettingKey[T], pathKey: String) =
@@ -54,6 +62,14 @@ object SbtBuildJobsPlugin extends sbt.AutoPlugin {
       val file = new File(getRequiredEnvVar(pathKey))
       val value = settingKey.value.toString
       streams.value.log.info(message(name.value, s"Writing value of $settingKey ('$value') to file ${file.getAbsolutePath}"))
+      IO.write(file, value)
+    }
+
+  private def writeTaskOutput[T](task: Def.Initialize[Task[String]], pathKey: String) =
+    Def.task {
+      val file = new File(getRequiredEnvVar(pathKey))
+      val value = task.value.toString
+      streams.value.log.info(message(name.value, s"Writing task output to file ${file.getAbsolutePath}"))
       IO.write(file, value)
     }
 

@@ -1,0 +1,5 @@
+# check projects is written to file
+> writeProjects
+$ exists projects.txt
+# check it contains the projects string
+> check
