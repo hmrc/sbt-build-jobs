@@ -41,7 +41,7 @@ object SbtBuildJobsPlugin extends sbt.AutoPlugin {
       taskKey[Unit](s"Write the value of `isPublicArtefact` to the file specified by the '${EnvKeys.isPublicArtefactFilename}' environment variable")
 
     val writeProjects =
-      taskKey[Unit](s"Write the value of `projects` to the file specified by the '${EnvKeys.isPublicArtefactFilename}' environment variable")
+      taskKey[Unit](s"Write project information to the file specified by the '${EnvKeys.isPublicArtefactFilename}' environment variable")
   }
 
   import autoImport._
@@ -51,8 +51,10 @@ object SbtBuildJobsPlugin extends sbt.AutoPlugin {
   override lazy val projectSettings = Seq(
     writeVersion          := writeSettingValue(version         , EnvKeys.versionFilename         ).value,
     writeIsPublicArtefact := writeSettingValue(isPublicArtefact, EnvKeys.isPublicArtefactFilename).value,
-    writeProjects         := writeTaskOutput(
-                               buildStructure.map(_.allProjectRefs.map(_.project).sorted.mkString("\n")),
+    writeProjects         := writeTaskOutput(buildStructure.map(_.allProjects.map(r =>
+                               s"""|- module: ${r.id}
+                                   |  folder: ${r.base.getName}""".stripMargin
+                               ).sorted.mkString("\n")),
                                EnvKeys.projectsFilename
                              ).value
   )
