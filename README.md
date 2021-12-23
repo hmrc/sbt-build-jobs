@@ -15,9 +15,23 @@ Outputs the value of the `version` setting to the file specified by the environm
 
 Outputs the value of the `isPublicArtefact` setting (see [sbt-setting-keys](https://github.com/hmrc/sbt-setting-keys/) to the file specified by the environment variable `IS_PUBLIC_ARTEFACT_FILENAME`
 
+### writeMeta
+
+Writes meta information to `meta.yaml` in each project's target directory
+
+### writeProjects
+
+Writes some project information in yaml format to the file specified by the environment variable `PROJECTS_FILENAME`
+
+
 ### Sbt 1.x
 
 This plugin is cross compiled for sbt `0.13.18` and `1.3.4`
+
+
+### Tests
+
+run `sbt ^test ^publishLocal ^scripted`
 
 ### License
 

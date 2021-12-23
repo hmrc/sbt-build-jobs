@@ -1,0 +1,7 @@
+# check meta is written to file
+> writeMeta
+$ exists writemeta-multimodule/target/meta.yaml
+$ exists myProject1/target/meta.yaml
+$ exists myProject2/target/meta.yaml
+# check they contain the metadata
+> check
