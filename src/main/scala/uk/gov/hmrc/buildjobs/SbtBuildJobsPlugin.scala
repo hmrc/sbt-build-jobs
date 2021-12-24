@@ -28,7 +28,8 @@ object SbtBuildJobsPlugin extends sbt.AutoPlugin {
     val projectsFilename         = "PROJECTS_FILENAME"
   }
 
-  private val currentVersion = getClass.getPackage.getImplementationVersion // This requires that the class is in a package unique to that build
+  private val currentVersion =
+    getClass.getPackage.getImplementationVersion // This requires that the class is in a package unique to that build
 
   private def getRequiredEnvVar(key: String): String =
     sys.env.getOrElse(key, sys.error(s"Env var '$key' is not defined"))
@@ -40,8 +41,11 @@ object SbtBuildJobsPlugin extends sbt.AutoPlugin {
     val writeIsPublicArtefact =
       taskKey[Unit](s"Write the value of `isPublicArtefact` to the file specified by the '${EnvKeys.isPublicArtefactFilename}' environment variable")
 
+    val writeMeta =
+      taskKey[Unit](s"Write meta information to meta.yaml in each project's target directory")
+
     val writeProjects =
-      taskKey[Unit](s"Write project information to the file specified by the '${EnvKeys.isPublicArtefactFilename}' environment variable")
+      taskKey[Unit](s"Write project information to the file specified by the '${EnvKeys.projectsFilename}' environment variable")
   }
 
   import autoImport._
@@ -51,6 +55,7 @@ object SbtBuildJobsPlugin extends sbt.AutoPlugin {
   override lazy val projectSettings = Seq(
     writeVersion          := writeSettingValue(version         , EnvKeys.versionFilename         ).value,
     writeIsPublicArtefact := writeSettingValue(isPublicArtefact, EnvKeys.isPublicArtefactFilename).value,
+    writeMeta             := writeMetaFile().value,
     writeProjects         := writeTaskOutput(buildStructure.map(_.allProjects.map(r =>
                                s"""|- module: ${r.id}
                                    |  folder: ${r.base.getName}""".stripMargin
@@ -59,11 +64,27 @@ object SbtBuildJobsPlugin extends sbt.AutoPlugin {
                              ).value
   )
 
- private def writeSettingValue[T](settingKey: SettingKey[T], pathKey: String) =
+  private def writeSettingValue[T](settingKey: SettingKey[T], pathKey: String) =
     Def.task {
       val file = new File(getRequiredEnvVar(pathKey))
       val value = settingKey.value.toString
       streams.value.log.info(message(name.value, s"Writing value of $settingKey ('$value') to file ${file.getAbsolutePath}"))
+      IO.write(file, value)
+    }
+
+  private def writeMetaFile() =
+    Def.task {
+      val value =
+        s"""|name              : ${name.value}
+            |organization      : ${organization.value}
+            |version           : ${version.value}
+            |sbtVersion        : ${sbtVersion.value}
+            |crossScalaVersions: ${crossScalaVersions.value.mkString("[", ", ", "]")}
+            |publish_skip      : ${(skip in publish).value}
+            |""".stripMargin
+
+      val file = new File(name.value + "/target/meta.yaml")
+      streams.value.log.info(message(name.value, s"Writing '$value' to file ${file.getAbsolutePath}"))
       IO.write(file, value)
     }
 

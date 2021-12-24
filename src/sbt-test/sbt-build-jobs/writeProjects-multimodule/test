@@ -1,5 +1,5 @@
 # check projects is written to file
 > writeProjects
-$ exists projects.txt
+$ exists projects.yaml
 # check it contains the projects string
 > check
