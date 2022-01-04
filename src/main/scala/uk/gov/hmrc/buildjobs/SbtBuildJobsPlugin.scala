@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -83,7 +83,7 @@ object SbtBuildJobsPlugin extends sbt.AutoPlugin {
             |publish_skip      : ${(skip in publish).value}
             |""".stripMargin
 
-      val file = new File(name.value + "/target/meta.yaml")
+      val file = new File(s"${target.value}/meta.yaml")
       streams.value.log.info(message(name.value, s"Writing '$value' to file ${file.getAbsolutePath}"))
       IO.write(file, value)
     }
