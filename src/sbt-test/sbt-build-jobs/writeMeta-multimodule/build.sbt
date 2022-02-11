@@ -6,11 +6,11 @@ lazy val myProject1 = (project in file("my-project-1"))
     publish / skip     := true,
     TaskKey[Unit]("check") := {
       val expectedContent =
-        """|name              : myProject1
-           |organization      : uk.gov.hmrc
-           |version           : 1.0.0
-           |sbtVersion        : 1.4.9
-           |crossScalaVersions: [2.12.15, 2.13.7]
+        """|name              : "myProject1"
+           |organization      : "uk.gov.hmrc"
+           |version           : "1.0.0"
+           |sbtVersion        : "1.4.9"
+           |crossScalaVersions: ["2.12.15", "2.13.7"]
            |publish_skip      : true
            |""".stripMargin
       val content = IO.read(new File("my-project-1/target/meta.yaml"))
