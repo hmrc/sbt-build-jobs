@@ -42,11 +42,11 @@ lazy val myProject2 = (project in file("my-project-2"))
 
 TaskKey[Unit]("check") := {
   val expectedContent =
-    """|name              : writemeta-multimodule
-       |organization      : default
-       |version           : 0.1.0-SNAPSHOT
-       |sbtVersion        : 1.4.9
-       |crossScalaVersions: [2.12.12]
+    """|name              : "writemeta-multimodule"
+       |organization      : "default"
+       |version           : "0.1.0-SNAPSHOT"
+       |sbtVersion        : "1.4.9"
+       |crossScalaVersions: ["2.12.12"]
        |publish_skip      : false
        |""".stripMargin
   val content = IO.read(new File("target/meta.yaml"))
