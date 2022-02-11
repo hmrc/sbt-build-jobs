@@ -75,11 +75,11 @@ object SbtBuildJobsPlugin extends sbt.AutoPlugin {
   private def writeMetaFile() =
     Def.task {
       val value =
-        s"""|name              : ${name.value}
-            |organization      : ${organization.value}
-            |version           : ${version.value}
-            |sbtVersion        : ${sbtVersion.value}
-            |crossScalaVersions: ${crossScalaVersions.value.mkString("[", ", ", "]")}
+        s"""|name              : "${name.value}"
+            |organization      : "${organization.value}"
+            |version           : "${version.value}"
+            |sbtVersion        : "${sbtVersion.value}"
+            |crossScalaVersions: ${crossScalaVersions.value.mkString("[\"", "\", \"", "\"]")}
             |publish_skip      : ${(skip in publish).value}
             |""".stripMargin
 
