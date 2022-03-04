@@ -10,7 +10,7 @@ lazy val myProject1 = (project in file("my-project-1"))
            |organization      : "uk.gov.hmrc"
            |version           : "1.0.0"
            |sbtVersion        : "1.4.9"
-           |crossScalaVersions: ["2.12.15", "2.13.7"]
+           |crossScalaVersions: ["2.12.15","2.13.7"]
            |publish_skip      : true
            |""".stripMargin
       val content = IO.read(new File("my-project-1/target/meta.yaml"))
@@ -34,6 +34,26 @@ lazy val myProject2 = (project in file("my-project-2"))
            |publish_skip      : false
            |""".stripMargin
       val content = IO.read(new File("my-project-2/target/meta.yaml"))
+      if (content != expectedContent) sys.error(s"expected meta:\n$expectedContent\nbut was:\n$content")
+      ()
+    }
+  )
+
+lazy val myProject3 = (project in file("my-project-3"))
+  .settings(
+    organization       := "uk.gov.hmrc",
+    version            := "2.0.0",
+    crossScalaVersions := Seq.empty,
+    TaskKey[Unit]("check") := {
+      val expectedContent =
+        """|name              : "myProject3"
+           |organization      : "uk.gov.hmrc"
+           |version           : "2.0.0"
+           |sbtVersion        : "1.4.9"
+           |crossScalaVersions: []
+           |publish_skip      : false
+           |""".stripMargin
+      val content = IO.read(new File("my-project-3/target/meta.yaml"))
       if (content != expectedContent) sys.error(s"expected meta:\n$expectedContent\nbut was:\n$content")
       ()
     }

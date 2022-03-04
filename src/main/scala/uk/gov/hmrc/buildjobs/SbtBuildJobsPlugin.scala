@@ -79,7 +79,7 @@ object SbtBuildJobsPlugin extends sbt.AutoPlugin {
             |organization      : "${organization.value}"
             |version           : "${version.value}"
             |sbtVersion        : "${sbtVersion.value}"
-            |crossScalaVersions: ${crossScalaVersions.value.mkString("[\"", "\", \"", "\"]")}
+            |crossScalaVersions: ${crossScalaVersions.value.map(v => s""""$v"""").mkString("[", ",", "]")}
             |publish_skip      : ${(skip in publish).value}
             |""".stripMargin
 
