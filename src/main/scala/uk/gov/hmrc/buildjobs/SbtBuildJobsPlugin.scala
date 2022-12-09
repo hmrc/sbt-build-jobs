@@ -56,10 +56,20 @@ object SbtBuildJobsPlugin extends sbt.AutoPlugin {
     writeVersion          := writeSettingValue(version         , EnvKeys.versionFilename         ).value,
     writeIsPublicArtefact := writeSettingValue(isPublicArtefact, EnvKeys.isPublicArtefactFilename).value,
     writeMeta             := writeMetaFile().value,
-    writeProjects         := writeTaskOutput(buildStructure.map(_.allProjects.map(r =>
-                               s"""|- module: ${r.id}
-                                   |  folder: ${r.base.getName}""".stripMargin
-                               ).sorted.mkString("\n")),
+    writeProjects         := writeTaskOutput(
+                               {
+                                 // pwd is the best way to identify the root module, since things like baseDirectory will change per module execution
+                                 val pwd = {import scala.sys.process._; "pwd" !!}.trim
+                                 buildStructure
+                                   .map(_.allProjects.map { r =>
+                                     // Note, when buiding the meta-artefact, the folder used for the root module actually uses the repoName (e.g. github url)
+                                     // this *should* always match the id in build.sbt
+                                     val folder = if (r.base.getAbsolutePath == pwd) r.id else r.base.getName
+                                     s"""|- module: ${r.id}
+                                         |  folder: $folder""".stripMargin
+                                     }.sorted.mkString("\n")
+                                   )
+                               },
                                EnvKeys.projectsFilename
                              ).value
   )
@@ -80,7 +90,7 @@ object SbtBuildJobsPlugin extends sbt.AutoPlugin {
             |version           : "${version.value}"
             |sbtVersion        : "${sbtVersion.value}"
             |crossScalaVersions: ${crossScalaVersions.value.map(v => s""""$v"""").mkString("[", ",", "]")}
-            |publish_skip      : ${(skip in publish).value}
+            |publish_skip      : ${(publish / skip).value}
             |""".stripMargin
 
       val file = new File(s"${target.value}/meta.yaml")
