@@ -26,7 +26,7 @@ Writes some project information in yaml format to the file specified by the envi
 
 ### Sbt 1.x
 
-This plugin is cross compiled for sbt `0.13.18` and `1.3.4`
+This plugin is compiled for sbt `1.x`
 
 
 ### Tests

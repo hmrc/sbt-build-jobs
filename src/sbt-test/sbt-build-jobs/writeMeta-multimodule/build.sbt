@@ -1,3 +1,5 @@
+lazy val root = (project in file(".")).aggregate(myProject1, myProject2)
+
 lazy val myProject1 = (project in file("my-project-1"))
   .settings(
     organization       := "uk.gov.hmrc",
@@ -62,8 +64,8 @@ lazy val myProject3 = (project in file("my-project-3"))
 
 TaskKey[Unit]("check") := {
   val expectedContent =
-    """|name              : "writemeta-multimodule"
-       |organization      : "default"
+    """|name              : "root"
+       |organization      : "root"
        |version           : "0.1.0-SNAPSHOT"
        |sbtVersion        : "1.4.9"
        |crossScalaVersions: ["2.12.12"]
