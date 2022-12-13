@@ -4,7 +4,7 @@ val expectedContent =
      |- module: myProject2
      |  folder: my-project-2
      |- module: root
-     |  folder: root""".stripMargin
+     |  folder: writeProjects""".stripMargin
 
 lazy val root = (project in file(".")).aggregate(myProject1, myProject2)
 

@@ -1,6 +1,6 @@
 val expectedContent =
   """|- module: root
-     |  folder: root""".stripMargin
+     |  folder: writeProjects""".stripMargin
 
 lazy val root = (project in file("."))
   .settings(

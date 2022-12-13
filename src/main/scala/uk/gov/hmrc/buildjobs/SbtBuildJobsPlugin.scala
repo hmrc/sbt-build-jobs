@@ -62,9 +62,14 @@ object SbtBuildJobsPlugin extends sbt.AutoPlugin {
                                  val pwd = {import scala.sys.process._; "pwd" !!}.trim
                                  buildStructure
                                    .map(_.allProjects.map { r =>
+                                      lazy val repoName =
+                                        (for {
+                                           gitUrl <- sys.env.get("GIT_URL")
+                                           m      <- ".*\\/(.*).git".r.findFirstMatchIn(gitUrl)
+                                         } yield m.group(1)
+                                        ).getOrElse(r.base.getName)
                                      // Note, when buiding the meta-artefact, the folder used for the root module actually uses the repoName (e.g. github url)
-                                     // this *should* always match the id in build.sbt
-                                     val folder = if (r.base.getAbsolutePath == pwd) r.id else r.base.getName
+                                     val folder = if (r.base.getAbsolutePath == pwd) repoName else r.base.getName
                                      s"""|- module: ${r.id}
                                          |  folder: $folder""".stripMargin
                                      }.sorted.mkString("\n")
