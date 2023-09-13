@@ -26,6 +26,7 @@ object SbtBuildJobsPlugin extends sbt.AutoPlugin {
     val versionFilename          = "VERSION_FILENAME"
     val isPublicArtefactFilename = "IS_PUBLIC_ARTEFACT_FILENAME"
     val projectsFilename         = "PROJECTS_FILENAME"
+    val hasItFilename            = "HAS_IT_FILENAME"
   }
 
   private val currentVersion =
@@ -46,6 +47,10 @@ object SbtBuildJobsPlugin extends sbt.AutoPlugin {
 
     val writeProjects =
       taskKey[Unit](s"Write project information to the file specified by the '${EnvKeys.projectsFilename}' environment variable")
+
+    val writeHasIt =
+      taskKey[Unit](s"Write if this project has an unaggregated integration test folder")
+
   }
 
   import autoImport._
@@ -76,6 +81,19 @@ object SbtBuildJobsPlugin extends sbt.AutoPlugin {
                                    )
                                },
                                EnvKeys.projectsFilename
+                             ).value,
+     writeHasIt           := writeTaskOutput(
+                               {
+                                 buildStructure.map { x =>
+                                   val aggregatedProjects = x.allProjects.flatMap(_.aggregate).distinct
+                                   x.allProjectRefs
+                                    .collect { case ref if !aggregatedProjects.contains(ref) && !ref.build.getPath().endsWith(ref.project + "/") => ref.project }
+                                    .distinct
+                                    .contains("it")
+                                    .toString
+                                 }
+                               },
+                               EnvKeys.hasItFilename
                              ).value
   )
 
