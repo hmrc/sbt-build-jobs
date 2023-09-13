@@ -23,10 +23,10 @@ import uk.gov.hmrc.sbtsettingkeys.Keys.isPublicArtefact
 object SbtBuildJobsPlugin extends sbt.AutoPlugin {
 
   private object EnvKeys {
-    val versionFilename          = "VERSION_FILENAME"
-    val isPublicArtefactFilename = "IS_PUBLIC_ARTEFACT_FILENAME"
-    val projectsFilename         = "PROJECTS_FILENAME"
-    val hasItFilename            = "HAS_IT_FILENAME"
+    val versionFilename              = "VERSION_FILENAME"
+    val isPublicArtefactFilename     = "IS_PUBLIC_ARTEFACT_FILENAME"
+    val projectsFilename             = "PROJECTS_FILENAME"
+    val unaggregatedProjectsFilename = "UNAGGREGATED_PROJECTS_FILENAME"
   }
 
   private val currentVersion =
@@ -48,8 +48,8 @@ object SbtBuildJobsPlugin extends sbt.AutoPlugin {
     val writeProjects =
       taskKey[Unit](s"Write project information to the file specified by the '${EnvKeys.projectsFilename}' environment variable")
 
-    val writeHasIt =
-      taskKey[Unit](s"Write if this project has an unaggregated integration test folder")
+    val writeUnaggregatedProjects =
+      taskKey[Unit](s"Write unaggregated subprojects to the file specified by the '${EnvKeys.unaggregatedProjectsFilename}' environment variable")
 
   }
 
@@ -82,18 +82,18 @@ object SbtBuildJobsPlugin extends sbt.AutoPlugin {
                                },
                                EnvKeys.projectsFilename
                              ).value,
-     writeHasIt           := writeTaskOutput(
+     writeUnaggregatedProjects := writeTaskOutput(
                                {
                                  buildStructure.map { x =>
-                                   val aggregatedProjects = x.allProjects.flatMap(_.aggregate).distinct
-                                   x.allProjectRefs
-                                    .collect { case ref if !aggregatedProjects.contains(ref) && !ref.build.getPath().endsWith(ref.project + "/") => ref.project }
-                                    .distinct
-                                    .contains("it")
-                                    .toString
+                                  val pwd = {import scala.sys.process._; "pwd" !!}.trim
+                                  val aggregatedProjects = x.allProjects.flatMap(_.aggregate).distinct.map(_.project)
+                                  x.allProjects
+                                   .filterNot(p => aggregatedProjects.contains(p.id) || p.base.getAbsolutePath == pwd)
+                                   .map(_.id)
+                                   .mkString("\n")
                                  }
                                },
-                               EnvKeys.hasItFilename
+                               EnvKeys.unaggregatedProjectsFilename
                              ).value
   )
 
