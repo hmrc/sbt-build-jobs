@@ -1,0 +1,5 @@
+# check projects is written to file
+> writeUnaggregatedProjects
+$ exists unaggregated-projects.yaml
+# check it contains the unaggregated projects string
+> check

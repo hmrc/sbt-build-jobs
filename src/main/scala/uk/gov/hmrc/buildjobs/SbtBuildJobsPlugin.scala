@@ -90,7 +90,7 @@ object SbtBuildJobsPlugin extends sbt.AutoPlugin {
                                   x.allProjects
                                    .filterNot(p => aggregatedProjects.contains(p.id) || p.base.getAbsolutePath == pwd)
                                    .map(_.id)
-                                   .mkString("\n")
+                                   .mkString("", "\n", "\n")
                                  }
                                },
                                EnvKeys.unaggregatedProjectsFilename
