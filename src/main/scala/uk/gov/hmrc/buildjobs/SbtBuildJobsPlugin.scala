@@ -23,9 +23,10 @@ import uk.gov.hmrc.sbtsettingkeys.Keys.isPublicArtefact
 object SbtBuildJobsPlugin extends sbt.AutoPlugin {
 
   private object EnvKeys {
-    val versionFilename          = "VERSION_FILENAME"
-    val isPublicArtefactFilename = "IS_PUBLIC_ARTEFACT_FILENAME"
-    val projectsFilename         = "PROJECTS_FILENAME"
+    val versionFilename              = "VERSION_FILENAME"
+    val isPublicArtefactFilename     = "IS_PUBLIC_ARTEFACT_FILENAME"
+    val projectsFilename             = "PROJECTS_FILENAME"
+    val unaggregatedProjectsFilename = "UNAGGREGATED_PROJECTS_FILENAME"
   }
 
   private val currentVersion =
@@ -46,6 +47,10 @@ object SbtBuildJobsPlugin extends sbt.AutoPlugin {
 
     val writeProjects =
       taskKey[Unit](s"Write project information to the file specified by the '${EnvKeys.projectsFilename}' environment variable")
+
+    val writeUnaggregatedProjects =
+      taskKey[Unit](s"Write unaggregated subprojects to the file specified by the '${EnvKeys.unaggregatedProjectsFilename}' environment variable")
+
   }
 
   import autoImport._
@@ -76,6 +81,19 @@ object SbtBuildJobsPlugin extends sbt.AutoPlugin {
                                    )
                                },
                                EnvKeys.projectsFilename
+                             ).value,
+     writeUnaggregatedProjects := writeTaskOutput(
+                               {
+                                 buildStructure.map { x =>
+                                  val pwd = {import scala.sys.process._; "pwd" !!}.trim
+                                  val aggregatedProjects = x.allProjects.flatMap(_.aggregate).distinct.map(_.project)
+                                  x.allProjects
+                                   .filterNot(p => aggregatedProjects.contains(p.id) || p.base.getAbsolutePath == pwd)
+                                   .map(_.id)
+                                   .mkString("", "\n", "\n")
+                                 }
+                               },
+                               EnvKeys.unaggregatedProjectsFilename
                              ).value
   )
 
