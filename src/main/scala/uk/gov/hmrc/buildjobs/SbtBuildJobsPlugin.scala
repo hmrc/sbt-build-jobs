@@ -62,23 +62,26 @@ object SbtBuildJobsPlugin extends sbt.AutoPlugin {
     writeIsPublicArtefact := writeSettingValue(isPublicArtefact, EnvKeys.isPublicArtefactFilename).value,
     writeMeta             := writeMetaFile().value,
     writeProjects         := writeTaskOutput(
-                               {
-                                 // pwd is the best way to identify the root module, since things like baseDirectory will change per module execution
+                               { // pwd is the best way to identify the root module, since things like baseDirectory will change per module execution
                                  val pwd = {import scala.sys.process._; "pwd" !!}.trim
-                                 buildStructure
-                                   .map(_.allProjects.map { r =>
+                                 buildStructure.map(
+                                   _.allProjects
+                                    .map { r =>
                                       lazy val repoName =
                                         (for {
                                            gitUrl <- sys.env.get("GIT_URL")
                                            m      <- ".*\\/(.*).git".r.findFirstMatchIn(gitUrl)
                                          } yield m.group(1)
                                         ).getOrElse(r.base.getName)
-                                     // Note, when buiding the meta-artefact, the folder used for the root module actually uses the repoName (e.g. github url)
-                                     val folder = if (r.base.getAbsolutePath == pwd) repoName else r.base.getName
-                                     s"""|- module: ${r.id}
-                                         |  folder: $folder""".stripMargin
-                                     }.sorted.mkString("\n")
-                                   )
+                                      // Note, when buiding the meta-artefact, the folder used for the root module actually uses the repoName (e.g. github url)
+                                      val folder = if (r.base.getAbsolutePath == pwd) repoName else r.base.getName
+                                      s"""|- module: ${r.id}
+                                          |  folder: $folder
+                                          |  aggregates:${if (r.aggregate.isEmpty) " []" else r.aggregate.sortBy(_.project).map("\n    - " ++ _.project).mkString}
+                                          |  root: ${r.base.getAbsolutePath == pwd}""".stripMargin
+                                    }.sorted
+                                     .mkString("", "\n", "\n")
+                                 )
                                },
                                EnvKeys.projectsFilename
                              ).value,
