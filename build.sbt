@@ -4,7 +4,7 @@ lazy val project = Project("sbt-build-jobs", file("."))
     majorVersion := 0,
     isPublicArtefact := true,
     scalaVersion := "2.12.18",
-    addSbtPlugin("uk.gov.hmrc"  % "sbt-setting-keys" % "0.3.0" ),
+    addSbtPlugin("uk.gov.hmrc"  % "sbt-setting-keys" % "1.0.0"),
     resolvers += Resolver.url("HMRC-open-artefacts-ivy2", url("https://open.artefacts.tax.service.gov.uk/ivy2"))(Resolver.ivyStylePatterns),
     scriptedLaunchOpts := {
       val homeDir = sys.props.get("jenkins.home")

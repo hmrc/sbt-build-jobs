@@ -1,5 +1,0 @@
-# check version is written to file
-> writeIsPublicArtefact
-$ exists ispublic.txt
-# check it contains the ispublic string
-> check

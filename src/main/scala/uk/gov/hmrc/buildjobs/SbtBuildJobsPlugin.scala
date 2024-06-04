@@ -50,7 +50,6 @@ object SbtBuildJobsPlugin extends sbt.AutoPlugin {
 
     val writeUnaggregatedProjects =
       taskKey[Unit](s"Write unaggregated subprojects to the file specified by the '${EnvKeys.unaggregatedProjectsFilename}' environment variable")
-
   }
 
   import autoImport._
@@ -86,18 +85,16 @@ object SbtBuildJobsPlugin extends sbt.AutoPlugin {
                                EnvKeys.projectsFilename
                              ).value,
      writeUnaggregatedProjects := writeTaskOutput(
-                               {
-                                 buildStructure.map { x =>
-                                  val pwd = {import scala.sys.process._; "pwd" !!}.trim
-                                  val aggregatedProjects = x.allProjects.flatMap(_.aggregate).distinct.map(_.project)
-                                  x.allProjects
-                                   .filterNot(p => aggregatedProjects.contains(p.id) || p.base.getAbsolutePath == pwd)
-                                   .map(_.id)
-                                   .mkString("", "\n", "\n")
-                                 }
-                               },
-                               EnvKeys.unaggregatedProjectsFilename
-                             ).value
+                                    buildStructure.map { x =>
+                                      val pwd = {import scala.sys.process._; "pwd" !!}.trim
+                                      val aggregatedProjects = x.allProjects.flatMap(_.aggregate).distinct.map(_.project)
+                                      x.allProjects
+                                      .filterNot(p => aggregatedProjects.contains(p.id) || p.base.getAbsolutePath == pwd)
+                                      .map(_.id)
+                                      .mkString("", "\n", "\n")
+                                    },
+                                    EnvKeys.unaggregatedProjectsFilename
+                                  ).value
   )
 
   private def writeSettingValue[T](settingKey: SettingKey[T], pathKey: String) =
@@ -105,7 +102,7 @@ object SbtBuildJobsPlugin extends sbt.AutoPlugin {
       val file = new File(getRequiredEnvVar(pathKey))
       val value = settingKey.value.toString
       streams.value.log.info(message(name.value, s"Writing value of $settingKey ('$value') to file ${file.getAbsolutePath}"))
-      IO.write(file, value)
+      IO.write(file, value + "\n")
     }
 
   private def writeMetaFile() =
