@@ -26,6 +26,7 @@ object SbtBuildJobsPlugin extends sbt.AutoPlugin {
     val versionFilename              = "VERSION_FILENAME"
     val isPublicArtefactFilename     = "IS_PUBLIC_ARTEFACT_FILENAME"
     val projectsFilename             = "PROJECTS_FILENAME"
+    val projectsRootFolder           = "PROJECTS_ROOT_FOLDER"
     val unaggregatedProjectsFilename = "UNAGGREGATED_PROJECTS_FILENAME"
   }
 
@@ -46,10 +47,11 @@ object SbtBuildJobsPlugin extends sbt.AutoPlugin {
       taskKey[Unit](s"Write meta information to meta.yaml in each project's target directory")
 
     val writeProjects =
-      taskKey[Unit](s"Write project information to the file specified by the '${EnvKeys.projectsFilename}' environment variable")
+      taskKey[Unit](s"Write project information to the file specified by the '${EnvKeys.projectsFilename}' environment variable. The root folder of the project is written as `_ROOT_` but can be modified with `${EnvKeys.projectsRootFolder}`")
 
     val writeUnaggregatedProjects =
       taskKey[Unit](s"Write unaggregated subprojects to the file specified by the '${EnvKeys.unaggregatedProjectsFilename}' environment variable")
+
   }
 
   import autoImport._
@@ -62,23 +64,16 @@ object SbtBuildJobsPlugin extends sbt.AutoPlugin {
     writeMeta             := writeMetaFile().value,
     writeProjects         := writeTaskOutput(
                                { // pwd is the best way to identify the root module, since things like baseDirectory will change per module execution
-                                 val pwd = {import scala.sys.process._; "pwd" !!}.trim
+                                 val pwd  = {import scala.sys.process._; "pwd" !!}.trim
+                                 val root = sys.env.getOrElse(EnvKeys.projectsRootFolder, "_ROOT_")
                                  buildStructure.map(
                                    _.allProjects
-                                    .map { r =>
-                                      lazy val repoName =
-                                        (for {
-                                           gitUrl <- sys.env.get("GIT_URL")
-                                           m      <- ".*\\/(.*).git".r.findFirstMatchIn(gitUrl)
-                                         } yield m.group(1)
-                                        ).getOrElse(r.base.getName)
-                                      // Note, when buiding the meta-artefact, the folder used for the root module actually uses the repoName (e.g. github url)
-                                      val folder = if (r.base.getAbsolutePath == pwd) repoName else r.base.getName
+                                    .map(r =>
                                       s"""|- module: ${r.id}
-                                          |  folder: $folder
+                                          |  folder: ${if (r.base.getAbsolutePath == pwd) root else r.base.getName}
                                           |  aggregates:${if (r.aggregate.isEmpty) " []" else r.aggregate.sortBy(_.project).map("\n    - " ++ _.project).mkString}
                                           |  root: ${r.base.getAbsolutePath == pwd}""".stripMargin
-                                    }.sorted
+                                    ).sorted
                                      .mkString("", "\n", "\n")
                                  )
                                },
