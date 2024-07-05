@@ -21,7 +21,7 @@ Writes meta information to `meta.yaml` in each project's target directory
 
 ### writeProjects
 
-Writes some project information in yaml format to the file specified by the environment variable `PROJECTS_FILENAME`
+Writes some project information in yaml format to the file specified by the environment variable `PROJECTS_FILENAME` - The root folder of the project is written as `_ROOT_` but can be modified with `PROJECTS_ROOT_FOLDER`
 
 
 ### Sbt 1.x

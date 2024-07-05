@@ -1,6 +1,6 @@
 val expectedContent =
   """|- module: root
-     |  folder: writeProjects
+     |  folder: _MODIFIED_ROOT_
      |  aggregates: []
      |  root: true
      |""".stripMargin
